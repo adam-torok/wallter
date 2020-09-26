@@ -71,7 +71,9 @@ export default {
       this.addedNew = true;
     },
     closeModal() {
-      this.addedNew = false;
+      setTimeout(() => {
+        this.addedNew = false;
+      }, 1000);
     },
   },
   data() {

@@ -71,7 +71,6 @@ export async function signIn(email, password) {
 }
 
 export async function getTransactions(userId) {
-  console.log(userId);
   let transactions = await db
     .collection("users")
     .doc(userId)
@@ -80,15 +79,34 @@ export async function getTransactions(userId) {
   return transactions.docs.map((doc) => doc.data());
 }
 
+export function makeTransaction(uid, value, type) {
+  let userRef = db.collection("users").doc(uid);
+  userRef.get().then(function(doc) {
+    if (doc.exists) {
+      if (type == "Expense") {
+        const expense = firebase.firestore.FieldValue.increment(-value);
+        userRef.update({
+          balance: expense,
+        });
+      } else {
+        const addValue = firebase.firestore.FieldValue.increment(value);
+        console.log("Add " + addValue);
+        userRef.update({
+          balance: addValue,
+        });
+      }
+    }
+  });
+}
+
 export async function addTransaction(flow, uid) {
-    
   await db
     .collection("users")
     .doc(uid)
     .collection("transactions")
     .add(flow)
     .then(function() {
-      console.log("Document successfully written!");
+      makeTransaction(uid, parseFloat(flow.value), flow.type);
     })
     .catch(function(error) {
       console.error("Error adding document: ", error);
