@@ -102,6 +102,7 @@ export default {
   },
   methods: {
     addFlow() {
+      // Actually converting fb. timestamp to readable date and send it to the db
       var rightNow = new Date();
       var res = rightNow
         .toISOString()

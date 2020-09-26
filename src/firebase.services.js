@@ -1,7 +1,7 @@
 import * as firebase from "firebase";
 
 var firebaseConfig = {
-  // All of these should be a .env file 🤘🏼
+  // TODO: All of these should be a .env file 🤘🏼
   apiKey: "AIzaSyAyQF7etoEgbfi0EyRnIiuB3RUB5yRFUck",
   authDomain: "wallter-f403f.firebaseapp.com",
   databaseURL: "https://wallter-f403f.firebaseio.com",
@@ -46,24 +46,24 @@ export async function getCurrentUser() {
   });
 }
 
-export async function getDataFromUser(uid) {
+export async function getDataFromUser(userId) {
   await db
     .collection("users")
-    .doc(uid)
+    .doc(userId)
     .get()
     .then(function(doc) {
       if (doc.exists) {
-        console.log(doc.data());
+        console.log(doc.data()); //Testing porpuses
       }
     });
 }
 
-export async function signIn(email, password) {
+export async function signIn(userEmail, userPassword) {
   try {
-    await auth.signInWithEmailAndPassword(email, password);
+    await auth.signInWithEmailAndPassword(userEmail, userPassword);
     return true;
   } catch (error) {
-    console.log(error.code);
+    console.log(error.code); // Testing porpuses
     return false;
   }
 }
@@ -81,9 +81,9 @@ export async function getSpecificSpendings(userId, type) {
   });
 }
 
-export async function sendPasswordResetLink(email) {
+export async function sendPasswordResetLink(userEmail) {
   auth
-    .sendPasswordResetEmail(email)
+    .sendPasswordResetEmail(userEmail)
     .then(function() {
       alert("email sent!");
     })
@@ -102,8 +102,8 @@ export async function getTransactions(userId, order) {
   return transactions.docs.map((doc) => doc.data());
 }
 
-export function makeTransaction(uid, value, type) {
-  let userRef = db.collection("users").doc(uid);
+export function makeTransaction(userId, value, type) {
+  let userRef = db.collection("users").doc(userId);
   userRef.get().then(function(doc) {
     if (doc.exists) {
       if (type == "Expense") {
@@ -123,37 +123,37 @@ export function makeTransaction(uid, value, type) {
   });
 }
 
-export async function addTransaction(flow, uid) {
+export async function addTransaction(flow, userId) {
   await db
     .collection("users")
-    .doc(uid)
+    .doc(userId)
     .collection("transactions")
     .add(flow)
     .then(function() {
-      makeTransaction(uid, parseFloat(flow.value), flow.type);
+      makeTransaction(userId, parseFloat(flow.value), flow.type);
     })
     .catch(function(error) {
       console.error("Error adding document: ", error);
     });
 }
 
-export async function signUp(email, password, name, incomes, balance) {
+export async function signUp(userEmail, userPassword, userName, userIncomes, userBalance) {
   try {
-    return await auth.createUserWithEmailAndPassword(email, password).then(
+    return await auth.createUserWithEmailAndPassword(userEmail, userPassword).then(
       function(user) {
         db.collection("users")
           .doc(user.user.uid)
           .set({
             uid: user.user.uid,
-            name: name,
-            email: email,
-            balance: balance,
-            income: incomes,
+            name: userName,
+            email: userEmail,
+            balance: userBalance,
+            income: userIncomes,
             createdAt: firebase.firestore.FieldValue.serverTimestamp(),
           });
         user.user
           .updateProfile({
-            displayName: name,
+            displayName: userName,
           })
           .then(
             function() {
