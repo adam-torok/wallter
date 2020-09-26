@@ -102,14 +102,14 @@ export default {
   },
   methods: {
     async fetchNews() {
-      const res = await fetch(
-       // "https://newsapi.org/v2/everything?q=money&from=2020-08-20&to=2020-08-20&sortBy=popularity&apiKey=eed39cf371d04783aa85d8f258030d56"
-      );
+      const res = await fetch();
+      //Also should be from the .env file
+      // "https://newsapi.org/v2/everything?q=money&from=2020-08-20&to=2020-08-20&sortBy=popularity&apiKey=eed39cf371d04783aa85d8f258030d56"
       return res.json();
     },
   },
   async mounted() {
-    this.news = {}
+    this.news = {};
   },
 };
 </script>
@@ -152,8 +152,8 @@ section > div {
     width: 200px !important;
     margin-bottom: px;
   }
-  .lottie__player-second{
-    grid-row:2;
+  .lottie__player-second {
+    grid-row: 2;
   }
 }
 </style>

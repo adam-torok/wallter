@@ -148,6 +148,8 @@ export default {
                 that.user.expensesThisMonth = doc.data().expensesThisMonth;
                 that.user.incomesThisMonth = doc.data().incomesThisMonth;
                 that.user.balance = doc.data().balance;
+                console.log(doc.data());
+                
               }
             });
         });
