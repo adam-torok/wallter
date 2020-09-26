@@ -1,9 +1,9 @@
 <template>
   <div class="profile">
     <div
-      class="profile__card bg-white sm:max-w-full max-w-md rounded overflow-hidden shadow-lg"
+      class="profile__card bg-white sm:max-w-full max-w-md rounded overflow-hidden"
     >
-      <div class="text-center p-2  border-b">
+      <div class="text-center p-2 ">
         <lottie-player
           data-tippy-content="Pop up the settings !"
           class="button__settings cursor-pointer"
@@ -13,7 +13,7 @@
           style="width: 25px; height: 25px; position:absolute; right:7%"
           hover
         ></lottie-player>
-        <div class="flex justify-center align-center m-5">
+        <div class="flex justify-start align-center m-5">
           <lottie-player
             class="lottie__player w-auto"
             src="https://assets9.lottiefiles.com/packages/lf20_SwqOyE.json"
@@ -22,14 +22,20 @@
             style="width: 150px; height: 150px;"
             autoplay
           ></lottie-player>
-        </div>
-        <div class="align-left m-auto flex flex-col">
-          <p class="pt-2 text-lg font-semibold">
+        <div class="flex flex-col justify-center items-start">
+           <p class="pt-2 text-lg font-semibold">
             {{ this.user.name }}
           </p>
           <p class="text-sm font-bold text-gray-600">
             {{ this.user.email }}
           </p>
+             <p class="text-sm font-bold text-gray-600">
+            {{ this.user.createdAt | convertEpochToDate }}
+          </p>
+        </div>
+        </div>
+        <p class="antialiased text-2xl   border-b-2 text-gray-600 text-left mb-1 font-bold">Brief</p>
+        <div class="align-left m-auto flex flex-col">
           <StatCard
             :expensesThisMonth="this.user.expensesThisMonth"
             :incomesThisMonth="this.user.incomesThisMonth"
@@ -75,8 +81,12 @@ export default {
 </script>
 
 <style scoped>
+.profile{
+  max-width: 1200px;
+  margin: auto;
+}
 .profile__card {
-  margin: 4rem;
+  margin: 2rem 4rem;
 }
 .lottier__player {
   width: auto !important;

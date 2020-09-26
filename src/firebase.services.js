@@ -92,11 +92,12 @@ export async function sendPasswordResetLink(email) {
     });
 }
 
-export async function getTransactions(userId) {
+export async function getTransactions(userId, order) {
   let transactions = await db
     .collection("users")
     .doc(userId)
     .collection("transactions")
+    .orderBy(order,"asc")
     .get();
   return transactions.docs.map((doc) => doc.data());
 }

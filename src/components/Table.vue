@@ -10,17 +10,26 @@
                     bg-blue-500 bg-opacity-25"
             >
               <td class="pl-5 p-3 pr-3 whitespace-no-wrap">
-                <div data-tippy-content="Date of flow"  class="antialiased text-gray-700 text-xl mb-1 font-bold">
+                <div
+                  @click="startOrdering('date')"
+                  data-tippy-content="Date of flow"
+                  class="antialiased text-gray-700 text-xl mb-1 font-bold"
+                >
                   Date
                 </div>
               </td>
               <td class="px-2 py-2 whitespace-no-wrap">
-                <div data-tippy-content="Type of flow"  class="antialiased text-gray-700 text-xl mb-1 font-bold">
+                <div
+                  @click="startOrdering('category')"
+                  data-tippy-content="Type of flow"
+                  class="antialiased text-gray-700 text-xl mb-1 font-bold"
+                >
                   Flow
                 </div>
               </td>
               <td class="px-2 py-2 whitespace-no-wrap">
                 <div
+                  @click="startOrdering('type')"
                   data-tippy-content="What type of flow is it"
                   class="antialiased text-gray-700 text-xl mb-1 font-bold"
                 >
@@ -29,6 +38,7 @@
               </td>
               <td class="px-2 py-2 whitespace-no-wrap">
                 <div
+                  @click="startOrdering('value')"
                   data-tippy-content="The value of the particular income/expense"
                   class="antialiased text-gray-700 text-xl mb-1 font-bold"
                 >
@@ -94,6 +104,12 @@ export default {
     },
   },
   props: ["transactions"],
+  methods: {
+    startOrdering(type) {
+      console.log("ordering " + type);
+      this.$emit("orderTable", type);
+    },
+  },
 };
 </script>
 

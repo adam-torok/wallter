@@ -47,7 +47,7 @@
       >
         Add new flow
       </button>
-      <Table :transactions="transactions" />
+      <Table :transactions="transactions" v-on:orderTable="orderTable" />
     </section>
   </div>
 </template>
@@ -83,6 +83,23 @@ export default {
       setTimeout(() => {
         this.addedNew = false;
       }, 1000);
+    },
+    orderTable(order) {
+      let that = this;
+      getTransactions(that.user.uid, order).then(function(res) {
+        that.transactions = res;
+        db.collection("users")
+          .doc(that.user.uid)
+          .get()
+          .then(function(doc) {
+            if (doc.exists) {
+              that.user.incomes = doc.data().income;
+              that.user.expensesThisMonth = doc.data().expensesThisMonth;
+              that.user.incomesThisMonth = doc.data().incomesThisMonth;
+              that.user.balance = doc.data().balance;
+            }
+          });
+      });
     },
   },
   data() {
@@ -120,7 +137,7 @@ export default {
       if (user) {
         that.user.uid = user.uid;
         that.user.name = user.displayName;
-        getTransactions(that.user.uid).then(function(res) {
+        getTransactions(that.user.uid, "date").then(function(res) {
           that.transactions = res;
           db.collection("users")
             .doc(that.user.uid)
