@@ -5,15 +5,19 @@
 </template>
 
 <script>
+import tippy from "tippy.js";
+import "tippy.js/dist/tippy.css";
 export default {
-  name: 'App',
-  data(){
-    return{
-      user : {},
-    }
+  name: "App",
+  data() {
+    return {
+      user: {},
+    };
   },
-
-}
+  updated() {
+    tippy("[data-tippy-content]");
+  },
+};
 </script>
 
 <style>

@@ -1,6 +1,7 @@
 <template>
   <div class="flex stat__cards">
     <div
+      data-tippy-content="This is the base data that you gave us, it is your salary - will be added to your balance every month" 
       class="min-w-0 m-5 rounded-lg border border-1 shadow-xs overflow-hidden bg-white dark:bg-gray-800"
     >
       <div class="p-4 flex items-center">
@@ -20,6 +21,7 @@
       </div>
     </div>
     <div
+      data-tippy-content="This shows you how much you spent this month, try to keep it as low as possible !"
       class="min-w-0 m-5 rounded-lg border border-1 shadow-xs overflow-hidden bg-white dark:bg-gray-800"
     >
       <div class="p-4 flex items-center">
@@ -39,6 +41,7 @@
       </div>
     </div>
     <div
+      data-tippy-content="This shows you how much did you earn this month, can be a gift or anything else"
       class="min-w-0 m-5 rounded-lg border border-1 shadow-xs overflow-hidden bg-white dark:bg-gray-800"
     >
       <div class="p-4 flex items-center">
@@ -58,6 +61,7 @@
       </div>
     </div>
     <div
+      data-tippy-content="Lets pump up these numbers"
       class="min-w-0 m-5 rounded-lg border border-1  shadow-xs overflow-hidden bg-white dark:bg-gray-800"
     >
       <div class="p-4 flex items-center">

@@ -25,7 +25,7 @@
       </div>
       <div>
         <lottie-player
-          class="lottie__player"
+          class="lottie__player lottie__player-second"
           src="https://assets9.lottiefiles.com/private_files/lf30_mwPqHM.json"
           mode="bounce"
           background="transparent"
@@ -151,6 +151,9 @@ section > div {
   .lottie__player {
     width: 200px !important;
     margin-bottom: px;
+  }
+  .lottie__player-second{
+    grid-row:2;
   }
 }
 </style>

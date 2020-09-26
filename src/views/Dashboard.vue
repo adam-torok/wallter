@@ -14,7 +14,7 @@
       v-on:closeFlowModal="closeFlowModal"
     />
     <h1 class="m-5 antialiased text-2xl mb-1 font-bold">
-      Here is your dashboard, Adam
+      Here is your dashboard, {{name}} san
     </h1>
     <p class="text-sm font-bold text-gray-600">
       Keep track of your expenses and incomes
@@ -40,6 +40,7 @@
         />
       </transition>
       <button
+        data-tippy-content="Add a new transaction!"
         @click="addFlow = true"
         class="add__flow mt-5 w-1/2 m-1 bg-blue-400 hover:bg-blue-400 text-white font-bold py-2 px-4 border-b-4 border-blue-700 hover:border-blue-500 rounded"
       >
@@ -85,6 +86,7 @@ export default {
   data() {
     return {
       uid: "",
+      name : "",
       balance: "",
       incomes: "",
       incomesThisMonth: "",
@@ -104,6 +106,7 @@ export default {
     await firebase.auth().onAuthStateChanged(function(user) {
       if (user) {
         that.uid = user.uid;
+        that.name = user.displayName;
         getTransactions(that.uid).then(function(res) {
           that.transactions = res;
           db.collection("users")
