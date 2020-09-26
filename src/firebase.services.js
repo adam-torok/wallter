@@ -30,9 +30,7 @@ export function signOut() {
   firebase
     .auth()
     .signOut()
-    .then(function() {
-      console.log("signed out");
-    })
+    .then(function() {})
     .catch(function(error) {
       console.log(error);
     });
@@ -68,6 +66,19 @@ export async function signIn(email, password) {
     console.log(error.code);
     return false;
   }
+}
+
+export async function getSpecificSpendings(userId, type) {
+  var spendings = await db
+    .collection("users")
+    .doc(userId)
+    .collection("transactions")
+    .where("category", "==", type)
+    .where("type", "==", "Expense")
+    .get();
+  return spendings.docs.map((doc) => {
+    return doc.data().value;
+  });
 }
 
 export async function sendPasswordResetLink(email) {

@@ -1,5 +1,5 @@
 <template>
-  <div class="container  mx-auto py-10 flex justify-center h-screen">
+  <div class="container  mx-auto py-10 flex justify-center">
     <div class="w-full pl-4flex flex-col">
       <div class="w-full overflow-auto shadow bg-white" id="journal-scroll">
         <table class="w-full">

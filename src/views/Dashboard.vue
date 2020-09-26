@@ -14,7 +14,7 @@
       v-on:closeFlowModal="closeFlowModal"
     />
     <h1 class="m-5 antialiased text-2xl mb-1 font-bold">
-      Here is your dashboard, {{name}} san
+      Here is your dashboard, {{ user.name }} san!
     </h1>
     <p class="text-sm font-bold text-gray-600">
       Keep track of your expenses and incomes
@@ -33,10 +33,11 @@
       >
         <StatCard
           v-if="stats"
-          :expensesThisMonth="expensesThisMonth"
-          :incomesThisMonth="incomesThisMonth"
-          :incomes="incomes"
-          :balance="balance"
+          :expensesThisMonth="user.expensesThisMonth"
+          :incomesThisMonth="user.incomesThisMonth"
+          :specificSpendings="specificSpendings"
+          :incomes="user.incomes"
+          :balance="user.balance"
         />
       </transition>
       <button
@@ -54,13 +55,14 @@
 <script>
 import * as firebase from "firebase";
 import { getTransactions } from "@/firebase.services.js";
+import { getSpecificSpendings } from "@/firebase.services.js";
 import { addTransaction } from "@/firebase.services.js";
-var db = firebase.firestore();
 import FlowModal from "@/components/FlowModal.vue";
 import Modal from "@/components/Modal.vue";
 import StatCard from "@/components/StatCard.vue";
 import Table from "@/components/Table.vue";
 import Navbar from "@/components/Navbar.vue";
+var db = firebase.firestore();
 export default {
   components: {
     Navbar,
@@ -74,7 +76,7 @@ export default {
       this.addFlow = false;
     },
     async addNewFlow(flow) {
-      addTransaction(flow, this.uid);
+      addTransaction(flow, this.user.uid);
       this.addedNew = true;
     },
     closeModal() {
@@ -85,15 +87,26 @@ export default {
   },
   data() {
     return {
-      uid: "",
-      name : "",
-      balance: "",
-      incomes: "",
-      incomesThisMonth: "",
-      expensesThisMonth: "",
+      user: {
+        uid: "",
+        name: "",
+        balance: "",
+        incomes: "",
+        incomesThisMonth: "",
+        expensesThisMonth: "",
+      },
       addFlow: false,
       stats: true,
       addedNew: false,
+      spendingTypes: [
+        "Groceries",
+        "Travel",
+        "Check",
+        "Takeaway",
+        "Accomondation",
+        "Gift",
+      ],
+      specificSpendings: [],
       transactions: {},
       modal: {
         modalText: "Sucessfully added flow!",
@@ -105,21 +118,33 @@ export default {
     var that = this;
     await firebase.auth().onAuthStateChanged(function(user) {
       if (user) {
-        that.uid = user.uid;
-        that.name = user.displayName;
-        getTransactions(that.uid).then(function(res) {
+        that.user.uid = user.uid;
+        that.user.name = user.displayName;
+        getTransactions(that.user.uid).then(function(res) {
           that.transactions = res;
           db.collection("users")
-            .doc(that.uid)
+            .doc(that.user.uid)
             .get()
             .then(function(doc) {
               if (doc.exists) {
-                that.incomes = doc.data().income;
-                that.expensesThisMonth = doc.data().expensesThisMonth;
-                that.incomesThisMonth = doc.data().incomesThisMonth;
-                that.balance = doc.data().balance;
+                that.user.incomes = doc.data().income;
+                that.user.expensesThisMonth = doc.data().expensesThisMonth;
+                that.user.incomesThisMonth = doc.data().incomesThisMonth;
+                that.user.balance = doc.data().balance;
               }
             });
+        });
+        //Basically gets all the documents from the db, foreach type it sums the value, than push it into an array as an object
+        //Still a bit buggy, cuz res will be in the promise for the first time, it works - but the console message is there
+        that.spendingTypes.forEach((type) => {
+          getSpecificSpendings(that.user.uid, type).then(function(res) {
+            var sum = res
+              .filter((x) => x > 0)
+              .reduce(function(a = 0, b = 0) {
+                return parseFloat(a) + parseFloat(b);
+              });
+            that.specificSpendings.push({ type, sum });
+          });
         });
       }
     });

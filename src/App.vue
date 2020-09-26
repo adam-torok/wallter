@@ -5,8 +5,11 @@
 </template>
 
 <script>
-import tippy from "tippy.js";
-import "tippy.js/dist/tippy.css";
+import tippy, { animateFill } from "tippy.js";
+import "tippy.js/dist/backdrop.css";
+import "tippy.js/animations/shift-away.css";
+import 'tippy.js/themes/light.css';
+
 export default {
   name: "App",
   data() {
@@ -15,12 +18,20 @@ export default {
     };
   },
   updated() {
-    tippy("[data-tippy-content]");
+    tippy("[data-tippy-content]"),
+      {
+        animateFill: true,
+        theme:"customized",
+        plugins: [animateFill],
+      };
   },
 };
 </script>
 
 <style>
+ .tippy-popper .tippy-tooltip.customized-theme * {
+    background-color: rgb(0, 68, 255)!important;    
+}
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;

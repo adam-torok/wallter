@@ -15,7 +15,7 @@
         loop
         autoplay
       ></lottie-player>
-      <h1 class="mt-2 antialiased text-2xl font-bold">Loading...</h1>
+      <h1 class="text-sm mt-2 font-bold text-gray-600">Loading...</h1>
     </div>
   </transition>
 </template>

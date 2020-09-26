@@ -126,7 +126,6 @@ export default {
     var that = this;
     await firebase.auth().onAuthStateChanged(function(user) {
       if (user) {
-        console.log(user);
         that.isLogged = true;
       }
     });
