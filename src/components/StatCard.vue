@@ -33,7 +33,7 @@
             Expenses this month
           </p>
           <p class="text-lg font-semibold text-gray-700 dark:text-gray-200">
-            5000 HUF
+            {{ this.expensesThisMonth }} HUF
           </p>
         </div>
       </div>
@@ -52,7 +52,7 @@
             Incomes this month
           </p>
           <p class="text-lg font-semibold text-gray-700 dark:text-gray-200">
-            400 HUF
+            {{ this.incomesThisMonth }} HUF
           </p>
         </div>
       </div>
@@ -62,7 +62,7 @@
     >
       <div class="p-4 flex items-center">
         <div
-          class="p-3 rounded-full text-green-500 dark:text-green-100 bg-green-100 dark:bg-green-500 mr-4"
+          class="p-3 rounded-full text-green-500  dark:text-green-100 bg-green-100 dark:bg-green-500 mr-4"
         >
           <i class="fas fa-wallet"></i>
         </div>
@@ -81,7 +81,7 @@
 
 <script>
 export default {
-  props: ["balance", "incomes"],
+  props: ["balance", "incomes", "expensesThisMonth", "incomesThisMonth"],
 };
 </script>
 

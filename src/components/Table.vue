@@ -37,20 +37,36 @@
               :key="transaction.id"
             >
               <td class="pl-5 p-3 pr-3 whitespace-no-wrap">
-                <div class="text-sm font-bold text-gray-600">{{transaction.date}}</div>
-              </td>
-              <td class="px-2 py-2 whitespace-no-wrap">
-                <div class="text-sm font-bold text-gray-600">{{transaction.category}}</div>
-              </td>
-              <td class="px-2 py-2">
-                <div
-                  class="text-sm font-bold w-1/2 m-auto text-white bg-green-500 rounded-lg"
-                >
-                  {{transaction.type}}
+                <div class="text-sm font-bold text-gray-600">
+                  {{ transaction.date | dateFormat }}
                 </div>
               </td>
               <td class="px-2 py-2 whitespace-no-wrap">
-                <div class="text-sm font-bold text-green-400">{{transaction.value}}</div>
+                <div class="text-sm font-bold text-gray-600">
+                  {{ transaction.category }}
+                </div>
+              </td>
+              <td class="px-2 py-2">
+                <div
+                  v-bind:class="{
+                    'bg-green-500': transaction.type == 'Income',
+                    'bg-red-500': transaction.type == 'Expense',
+                  }"
+                  class="text-sm font-bold w-1/2 m-auto text-white rounded-lg"
+                >
+                  {{ transaction.type }}
+                </div>
+              </td>
+              <td class="px-2 py-2 whitespace-no-wrap">
+                <div
+                  v-bind:class="{
+                    'text-green-500': transaction.type == 'Income',
+                    'text-red-500': transaction.type == 'Expense',
+                  }"
+                  class="text-sm font-bold"
+                >
+                  {{ transaction.value }} Ft
+                </div>
               </td>
             </tr>
           </tbody>
@@ -62,6 +78,15 @@
 
 <script>
 export default {
+  filters: {
+    dateFormat(date) {
+      //My overkilled formatter filter 😅
+      let year = date.slice(0, 4);
+      let month = date.slice(4, 6);
+      let day = date.slice(6, 8);
+      return year.concat(".", month) + "." + day;
+    },
+  },
   props: ["transactions"],
 };
 </script>

@@ -32,7 +32,7 @@
           ></lottie-player>
         </div>
         <div class="modal__body mb-4">
-          <p>{{ this.modalText }}</p>
+          <p class="text-sm font-bold text-gray-600 mt-5">{{ this.modalText }}</p>
         </div>
         <div class="modal__footer flex justify-center">
           <button

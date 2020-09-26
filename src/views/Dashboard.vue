@@ -31,7 +31,13 @@
         enter-active-class="animated fadeIn"
         leave-active-class="animated fadeOut"
       >
-        <StatCard v-if="stats" :incomes="incomes" :balance="balance" />
+        <StatCard
+          v-if="stats"
+          :expensesThisMonth="expensesThisMonth"
+          :incomesThisMonth="incomesThisMonth"
+          :incomes="incomes"
+          :balance="balance"
+        />
       </transition>
       <button
         @click="addFlow = true"
@@ -81,6 +87,8 @@ export default {
       uid: "",
       balance: "",
       incomes: "",
+      incomesThisMonth: "",
+      expensesThisMonth: "",
       addFlow: false,
       stats: true,
       addedNew: false,
@@ -103,8 +111,9 @@ export default {
             .get()
             .then(function(doc) {
               if (doc.exists) {
-                console.log("wuf dot com");
                 that.incomes = doc.data().income;
+                that.expensesThisMonth = doc.data().expensesThisMonth;
+                that.incomesThisMonth = doc.data().incomesThisMonth;
                 that.balance = doc.data().balance;
               }
             });

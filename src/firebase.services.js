@@ -86,12 +86,13 @@ export function makeTransaction(uid, value, type) {
       if (type == "Expense") {
         const expense = firebase.firestore.FieldValue.increment(-value);
         userRef.update({
+          expensesThisMonth : expense,
           balance: expense,
         });
       } else {
         const addValue = firebase.firestore.FieldValue.increment(value);
-        console.log("Add " + addValue);
         userRef.update({
+          incomesThisMonth : addValue,
           balance: addValue,
         });
       }
