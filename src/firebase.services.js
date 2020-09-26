@@ -70,6 +70,17 @@ export async function signIn(email, password) {
   }
 }
 
+export async function sendPasswordResetLink(email) {
+  auth
+    .sendPasswordResetEmail(email)
+    .then(function() {
+      alert("email sent!");
+    })
+    .catch(function(error) {
+      alert(error);
+    });
+}
+
 export async function getTransactions(userId) {
   let transactions = await db
     .collection("users")
@@ -86,13 +97,13 @@ export function makeTransaction(uid, value, type) {
       if (type == "Expense") {
         const expense = firebase.firestore.FieldValue.increment(-value);
         userRef.update({
-          expensesThisMonth : expense,
+          expensesThisMonth: expense,
           balance: expense,
         });
       } else {
         const addValue = firebase.firestore.FieldValue.increment(value);
         userRef.update({
-          incomesThisMonth : addValue,
+          incomesThisMonth: addValue,
           balance: addValue,
         });
       }

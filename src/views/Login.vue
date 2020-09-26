@@ -10,6 +10,7 @@
     <ForgottenPasswordModal
       v-show="passwordReset"
       v-on:closeModal="closeModal"
+      v-on:sendPasswordResetEmail="sendPasswordResetEmail"
       :modalHeader="passwordResetModal.modalHeader"
       :modalText="passwordResetModal.modalText"
     />
@@ -66,6 +67,8 @@ import Navbar from "@/components/Navbar.vue";
 import ForgottenPasswordModal from "@/components/ForgottenPasswordModal.vue";
 import Modal from "@/components/Modal.vue";
 import { signIn } from "@/firebase.services.js";
+import { sendPasswordResetLink } from "@/firebase.services.js";
+
 
 export default {
   components: {
@@ -75,17 +78,20 @@ export default {
   },
   data() {
     return {
+      failedLogin: false,
+      passwordReset: false,
+
       user: {
         name: "",
         password: "",
         email: "",
       },
-      failedLogin: false,
-      passwordReset: false,
+
       passwordResetModal: {
         modalHeader: "Did you forgot your password?",
         modalText: "Give us your email, and we'll send a link",
       },
+
       authenticateModal: {
         modalHeader: "Couldn't authenticate",
         modalText: "Wrong email or password!",
@@ -104,6 +110,9 @@ export default {
       this.failedLogin = false;
       this.passwordReset = false;
     },
+    async sendPasswordResetEmail(email){
+      sendPasswordResetLink(email);
+    }
   },
 };
 </script>
