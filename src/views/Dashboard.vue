@@ -1,5 +1,6 @@
 <template>
   <div>
+    <Loader v-show="showLoader" />
     <Navbar />
     <Modal
       v-on:closeModal="closeModal"
@@ -19,36 +20,78 @@
     <p class="text-sm font-bold text-gray-600">
       Keep track of your expenses and incomes
     </p>
-    <section class="flex justify-center w-full">
-      <button
-        @click="stats = !stats"
-        class="show__stats w-1/2 hidden mt-5  m-1 bg-blue-400 hover:bg-blue-400 text-white font-bold py-2 px-4 border-b-4 border-blue-700 hover:border-blue-500 rounded"
+    <button
+      data-tippy-content="Add a new transaction!"
+      @click="addFlow = true"
+      class="add__flow mt-5 w-1/2 m-1 bg-blue-400 hover:bg-blue-400 text-white font-bold py-2 px-4 border-b-4 border-blue-700 hover:border-blue-500 rounded"
+    >
+      Add new flow
+    </button>
+    <button
+      @click="stats = !stats"
+      class="show__stats mt-5 w-1/2 m-1 bg-blue-400 hover:bg-blue-400 text-white font-bold py-2 px-4 border-b-4 border-blue-700 hover:border-blue-500 rounded"
+    >
+      Statistics
+    </button>
+    <section v-if="stats" class="flex justify-center w-full">
+      <p class="text-lg font-bold text-gray-600">
+        Charts on your spendings
+      </p>
+      <div
+        class="part__charts m-5 flex flex-row bg-white rounded-lg border border-1 justify-evenly shadow-xs w-3/4"
       >
-        Statistics
-      </button>
-      <transition
-        mode="out-in"
-        enter-active-class="animated fadeIn"
-        leave-active-class="animated fadeOut"
-      >
-        <StatCard
-          v-if="stats"
-          :expensesThisMonth="user.expensesThisMonth"
-          :incomesThisMonth="user.incomesThisMonth"
-          :specificSpendings="specificSpendings"
-          :incomes="user.incomes"
-          :balance="user.balance"
+        <PieChart
+          class="chart"
+          v-if="loaded"
+          :options="chartOptions"
+          :chartData="chartdata"
         />
-      </transition>
-      <button
-        data-tippy-content="Add a new transaction!"
-        @click="addFlow = true"
-        class="add__flow mt-5 w-1/2 m-1 bg-blue-400 hover:bg-blue-400 text-white font-bold py-2 px-4 border-b-4 border-blue-700 hover:border-blue-500 rounded"
+        <LineChart
+          class="chart"
+          v-if="loaded"
+          :options="chartOptions"
+          :chartData="chartdata"
+        />
+      </div>
+      <p class="text-lg font-bold text-gray-600">
+        Statistics on your spendings
+      </p>
+      <div
+        class="stat__card-holder m-5 flex flex-row bg-white rounded-lg border border-1 shadow-xs w-3/4"
       >
-        Add new flow
-      </button>
-      <Table :transactions="transactions" v-on:orderTable="orderTable" />
+        <transition
+          mode="out-in"
+          enter-active-class="animated fadeIn"
+          leave-active-class="animated fadeOut"
+        >
+          <StatCard
+            v-if="stats"
+            :expensesThisMonth="user.expensesThisMonth"
+            :incomesThisMonth="user.incomesThisMonth"
+            :specificSpendings="specificSpendings"
+            :incomes="user.incomes"
+            :balance="user.balance"
+          />
+        </transition>
+      </div>
+      <p class="text-lg font-bold text-gray-600">
+        Table on your spendings
+      </p>
+      <div
+        class="m-5 flex flex-row bg-white rounded-lg border border-1 shadow-xs w-3/4"
+      >
+        <Table :transactions="transactions" v-on:orderTable="orderTable" />
+      </div>
     </section>
+    <lottie-player
+      v-if="!stats"
+      src="https://assets2.lottiefiles.com/packages/lf20_lhy3lqfr.json"
+      background="transparent"
+      speed="1"
+      style="width: 300px; height: 300px; margin: 50px auto"
+      loop
+      autoplay
+    ></lottie-player>
   </div>
 </template>
 
@@ -61,15 +104,62 @@ import FlowModal from "@/components/FlowModal.vue";
 import Modal from "@/components/Modal.vue";
 import StatCard from "@/components/StatCard.vue";
 import Table from "@/components/Table.vue";
+import PieChart from "@/components/PieChart.vue";
+import LineChart from "@/components/LineChart.vue";
+import Loader from "@/components/Loader.vue";
 import Navbar from "@/components/Navbar.vue";
 var db = firebase.firestore();
 export default {
   components: {
     Navbar,
+    Loader,
+    PieChart,
+    LineChart,
     Modal,
     StatCard,
     Table,
     FlowModal,
+  },
+  data() {
+    return {
+      //Stores data from the user
+      user: {
+        uid: "",
+        name: "",
+        balance: "",
+        incomes: "",
+        incomesThisMonth: "",
+        expensesThisMonth: "",
+      },
+      //These are initial spending types
+      spendingTypes: [
+        "Groceries",
+        "Travel",
+        "Check",
+        "Takeaway",
+        "Accomondation",
+        "Gift",
+      ],
+      //Specific spendings will be filled depending on data in the database, the sum and the type of the spending.
+      specificSpendings: [],
+      transactions: {},
+      //These are some options for the component 'LineChart'
+      chartOptions: {
+        responsive: true,
+        maintainAspectRatio: false,
+      },
+      //Some modalTexts for adding new flow
+      modal: {
+        modalText: "Sucessfully added flow!",
+        modalHeader: "Yeey!",
+      },
+      loaded: false,
+      chartdata: null,
+      addFlow: false,
+      stats: true,
+      addedNew: false,
+      showLoader: true,
+    };
   },
   methods: {
     closeFlowModal() {
@@ -82,7 +172,7 @@ export default {
     closeModal() {
       setTimeout(() => {
         this.addedNew = false;
-      }, 1000);
+      }, 1500);
     },
     orderTable(order) {
       let that = this;
@@ -102,35 +192,6 @@ export default {
       });
     },
   },
-  data() {
-    return {
-      user: {
-        uid: "",
-        name: "",
-        balance: "",
-        incomes: "",
-        incomesThisMonth: "",
-        expensesThisMonth: "",
-      },
-      addFlow: false,
-      stats: true,
-      addedNew: false,
-      spendingTypes: [
-        "Groceries",
-        "Travel",
-        "Check",
-        "Takeaway",
-        "Accomondation",
-        "Gift",
-      ],
-      specificSpendings: [],
-      transactions: {},
-      modal: {
-        modalText: "Sucessfully added flow!",
-        modalHeader: "Yeey!",
-      },
-    };
-  },
   async created() {
     var that = this;
     await firebase.auth().onAuthStateChanged(function(user) {
@@ -148,8 +209,7 @@ export default {
                 that.user.expensesThisMonth = doc.data().expensesThisMonth;
                 that.user.incomesThisMonth = doc.data().incomesThisMonth;
                 that.user.balance = doc.data().balance;
-                console.log(doc.data());
-                
+                that.loaded = true;
               }
             });
         });
@@ -163,10 +223,16 @@ export default {
                 return parseFloat(a) + parseFloat(b);
               });
             that.specificSpendings.push({ type, sum });
+            that.chartdata = that.specificSpendings;
           });
         });
       }
     });
+  },
+  mounted() {
+    setTimeout(() => {
+      this.showLoader = false;
+    }, 1000);
   },
 };
 </script>
@@ -178,13 +244,19 @@ section {
 .add__flow {
   width: 200px !important;
 }
+.chart {
+  margin: 20px;
+}
 @media only screen and (max-width: 600px) {
+  .part__charts {
+    flex-direction: column;
+    width: auto;
+  }
   section {
     height: auto !important;
     margin: auto;
   }
   .show__stats {
-    display: block;
     width: 200px !important;
   }
 }

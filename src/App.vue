@@ -12,6 +12,8 @@ import 'tippy.js/themes/light.css';
 
 export default {
   name: "App",
+  components:{
+  },
   data() {
     return {
       user: {},

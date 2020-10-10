@@ -85,7 +85,7 @@
       :key="specificSpending.id"
       class="min-w-0 m-5 rounded-lg border border-red-200 border-1  shadow-xs overflow-hidden bg-white dark:bg-gray-800"
     >
-      <div class="p-4 flex items-center">
+      <div class="card__spending p-4 flex items-center">
         <div
           class="p-3 rounded-full text-red-500  dark:text-red-200 bg-red-200 dark:bg-green-200 mr-4"
         >
@@ -126,6 +126,7 @@ section {
 }
 @media only screen and (max-width: 600px) {
   .stat__cards {
+    width: auto;
     grid-template-columns: 1fr;
   }
 }
