@@ -5,6 +5,7 @@
     >
       <div class="text-center p-2 ">
         <lottie-player
+          @click="displaySettings()"
           data-tippy-content="Pop up the settings !"
           class="button__settings cursor-pointer"
           src="https://assets1.lottiefiles.com/packages/lf20_Jd6ls7.json"
@@ -71,6 +72,11 @@ export default {
     },
   },
   methods: {
+    displaySettings(){
+      console.log("emitting displaySettings");
+      
+      this.$emit("displaySettings");
+    },
     deleteUserAccount() {
       deleteAccount(this.user.uid);
       signOut();
@@ -96,8 +102,8 @@ export default {
     margin: 0;
   }
   .button__settings {
-    width: 50px !important;
-    height: 50px !important;
+    width: 25px !important;
+    height: 25px !important;
   }
 }
 </style>

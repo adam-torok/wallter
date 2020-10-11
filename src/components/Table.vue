@@ -5,9 +5,9 @@
         <table class="w-full">
           <tbody class="">
             <tr
-              class="relative transform scale-100
+              class="thead relative transform scale-100
                     text-xs py-1 border-b-2  border-blue-100 cursor-default
-                    bg-blue-500 bg-opacity-25"
+                    "
             >
               <td class="pl-5 p-3 pr-3 whitespace-no-wrap">
                 <div
@@ -65,7 +65,7 @@
               <td class="px-2 py-2">
                 <div
                   v-bind:class="{
-                    'bg-green-500': transaction.type == 'Income',
+                    'income-color': transaction.type == 'Income',
                     'bg-red-500': transaction.type == 'Expense',
                   }"
                   class="text-sm font-bold w-1/2 m-auto text-white rounded-lg"
@@ -76,7 +76,7 @@
               <td class="px-2 py-2 whitespace-no-wrap">
                 <div
                   v-bind:class="{
-                    'text-green-500': transaction.type == 'Income',
+                    'income': transaction.type == 'Income',
                     'text-red-500': transaction.type == 'Expense',
                   }"
                   class="text-sm font-bold"
@@ -116,5 +116,17 @@ export default {
 <style>
 table {
   width: 80%;
+}
+.income-color{
+  background: #4299e1;
+}
+.income{
+  color:#4299e1;
+}
+.thead{
+  background:#4299e1;
+}
+.thead>td>div{
+   color:white!important;
 }
 </style>

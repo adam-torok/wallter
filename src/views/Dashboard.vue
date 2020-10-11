@@ -2,11 +2,12 @@
   <div>
     <Loader v-show="showLoader" />
     <Navbar />
+    <DashboardNavbar />
     <Modal
       v-on:closeModal="closeModal"
-      :modalText="modal.modalText"
+      :modalText="modals.addNewFlowModal.modalText"
       :isLoader="true"
-      :modalHeader="modal.modalHeader"
+      :modalHeader="modals.addNewFlowModal.modalHeader"
       v-if="addedNew"
     />
     <FlowModal
@@ -14,6 +15,12 @@
       :addNewFlow="addNewFlow"
       v-on:closeFlowModal="closeFlowModal"
     />
+    <ResetProgressModal
+      v-if="resetProgress"
+      :resetUserProgress="resetUserProgress"
+      v-on:closeResetModal="closeResetModal"
+    />
+    <SideNote />
     <h1 class="m-5 antialiased text-2xl mb-1 font-bold">
       Here is your dashboard, {{ user.name }} san!
     </h1>
@@ -26,6 +33,13 @@
       class="add__flow mt-5 w-1/2 m-1 bg-blue-400 hover:bg-blue-400 text-white font-bold py-2 px-4 border-b-4 border-blue-700 hover:border-blue-500 rounded"
     >
       Add new flow
+    </button>
+    <button
+      data-tippy-content="Reset your whole progress!"
+      @click="resetProgress = true"
+      class="add__flow mt-5 w-1/2 m-1 bg-blue-400 hover:bg-blue-400 text-white font-bold py-2 px-4 border-b-4 border-blue-700 hover:border-blue-500 rounded"
+    >
+      Reset progress
     </button>
     <button
       @click="stats = !stats"
@@ -100,7 +114,9 @@ import * as firebase from "firebase";
 import { getTransactions } from "@/firebase.services.js";
 import { getSpecificSpendings } from "@/firebase.services.js";
 import { addTransaction } from "@/firebase.services.js";
+import { resetProgress } from "@/firebase.services.js";
 import FlowModal from "@/components/FlowModal.vue";
+import ResetProgressModal from "@/components/ResetProgressModal.vue";
 import Modal from "@/components/Modal.vue";
 import StatCard from "@/components/StatCard.vue";
 import Table from "@/components/Table.vue";
@@ -108,14 +124,19 @@ import PieChart from "@/components/PieChart.vue";
 import LineChart from "@/components/LineChart.vue";
 import Loader from "@/components/Loader.vue";
 import Navbar from "@/components/Navbar.vue";
+import DashboardNavbar from "@/components/DashboardNavbar.vue";
+import SideNote from "@/components/SideNote.vue";
 var db = firebase.firestore();
 export default {
   components: {
     Navbar,
+    DashboardNavbar,
     Loader,
+    SideNote,
     PieChart,
     LineChart,
     Modal,
+    ResetProgressModal,
     StatCard,
     Table,
     FlowModal,
@@ -148,14 +169,21 @@ export default {
         responsive: true,
         maintainAspectRatio: false,
       },
-      //Some modalTexts for adding new flow
-      modal: {
-        modalText: "Sucessfully added flow!",
-        modalHeader: "Yeey!",
+      //Some modalTexts - nothing special
+      modals: {
+        addNewFlowModal: {
+          modalText: "Sucessfully added flow!",
+          modalHeader: "Yeey!",
+        },
+        resetProgressModal: {
+          modalText: "Sucessfully resetted your progress!",
+          modalHeader: "Yeey!",
+        },
       },
       loaded: false,
       chartdata: null,
       addFlow: false,
+      resetProgress: false,
       stats: true,
       addedNew: false,
       showLoader: true,
@@ -165,13 +193,26 @@ export default {
     closeFlowModal() {
       this.addFlow = false;
     },
+    closeResetModal() {
+      this.resetProgress = false;
+    },
+    async resetUserProgress() {
+      resetProgress(this.user.uid);
+      setTimeout(() => {
+        location.reload();
+      }, 1000);
+    },
     async addNewFlow(flow) {
       addTransaction(flow, this.user.uid);
       this.addedNew = true;
+      setTimeout(() => {
+        location.reload();
+      }, 300);
     },
     closeModal() {
       setTimeout(() => {
         this.addedNew = false;
+        this.resetProgress = false;
       }, 1500);
     },
     orderTable(order) {

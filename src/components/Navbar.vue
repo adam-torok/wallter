@@ -15,7 +15,7 @@
       class="flex flex-col max-w-screen-xl px-4 mx-auto md:items-center md:justify-between md:flex-row md:px-6 lg:px-8"
     >
       <div class="p-4 flex flex-row items-center justify-between">
-        <a href="#" class="antialiased text-2xl font-bold">WALLTER</a>
+        <a href="#" class="logo antialiased text-2xl font-bold">WALLTER</a>
         <button
           class="md:hidden rounded-lg focus:outline-none focus:shadow-outline"
           @click="open = !open"

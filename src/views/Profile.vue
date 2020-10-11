@@ -2,7 +2,8 @@
   <div>
     <Navbar />
     <Loader v-show="showLoader" />
-    <UserCard :user="user" />
+    <Settings v-on:closeModal="closeModal" v-if="showSettings"/>
+    <UserCard v-on:displaySettings="displaySettings" :user="user" />
   </div>
 </template>
 
@@ -12,10 +13,12 @@ var db = firebase.firestore();
 
 import Navbar from "@/components/Navbar.vue";
 import UserCard from "@/components/UserCard.vue";
+import Settings from "@/components/Settings.vue";
 import Loader from "@/components/Loader.vue";
 export default {
   components: {
     Navbar: Navbar,
+    Settings: Settings,
     Loader: Loader,
     UserCard: UserCard,
   },
@@ -23,10 +26,18 @@ export default {
     return {
       user: {},
       showLoader: true,
+      showSettings : false
     };
   },
 
-  methods: {},
+  methods: {
+    displaySettings(){
+      this.showSettings = true;
+    },
+    closeModal() {
+        this.showSettings = false;
+    },
+  },
 
   mounted() {
     setTimeout(() => {

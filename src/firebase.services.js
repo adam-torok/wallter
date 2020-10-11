@@ -97,7 +97,7 @@ export async function getTransactions(userId, order) {
     .collection("users")
     .doc(userId)
     .collection("transactions")
-    .orderBy(order,"asc")
+    .orderBy(order, "asc")
     .get();
   return transactions.docs.map((doc) => doc.data());
 }
@@ -137,46 +137,83 @@ export async function addTransaction(flow, userId) {
     });
 }
 
-export async function signUp(userEmail, userPassword, userName, userIncomes, userBalance) {
+export function resetUserProgress(userId) {
+  let userRef = db.collection("users").doc(userId);
+  userRef.get().then(function(doc) {
+    if (doc.exists) {
+      userRef.update({
+        expensesThisMonth: 0,
+        incomesThisMonth:0,
+        balance: 0,
+      });
+    }
+  });
+}
+
+export async function resetProgress(userId) {
+  await db
+    .collection("users")
+    .doc(userId)
+    .collection("transactions")
+    .get()
+    .then((res) => {
+      res.forEach((element) => {
+        element.ref.delete();
+      });
+    })
+    .then(function() {
+      resetUserProgress(userId)
+    });
+}
+
+export async function signUp(
+  userEmail,
+  userPassword,
+  userName,
+  userIncomes,
+  userBalance
+) {
   try {
-    return await auth.createUserWithEmailAndPassword(userEmail, userPassword).then(
-      function(user) {
-        db.collection("users")
-          .doc(user.user.uid)
-          .set({
-            uid: user.user.uid,
-            name: userName,
-            email: userEmail,
-            balance: userBalance,
-            income: userIncomes,
-            createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-          });
-        user.user
-          .updateProfile({
-            displayName: userName,
-          })
-          .then(
-            function() {
-              return true;
-            },
-            function() {
-              return false;
-            }
-          );
-      },
-      function(error) {
-        var errorCode = error.code;
-        if (errorCode == "auth/email-already-in-use") {
-          alert("The email is already used.");
+    return await auth
+      .createUserWithEmailAndPassword(userEmail, userPassword)
+      .then(
+        function(user) {
+          db.collection("users")
+            .doc(user.user.uid)
+            .set({
+              uid: user.user.uid,
+              name: userName,
+              email: userEmail,
+              balance: userBalance,
+              income: userIncomes,
+              createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+            });
+          user.user
+            .updateProfile({
+              displayName: userName,
+            })
+            .then(
+              function() {
+                return true;
+              },
+              function() {
+                return false;
+              }
+            );
+        },
+        function(error) {
+          var errorCode = error.code;
+          if (errorCode == "auth/email-already-in-use") {
+            alert("The email is already used.");
+          }
+          if (errorCode == "auth/weak-password") {
+            alert("The password is too weak.");
+          } else {
+            console.error(error);
+          }
+          return false;
         }
-        if (errorCode == "auth/weak-password") {
-          alert("The password is too weak.");
-        } else {
-          console.error(error);
-        }
-        return false;
-      }
-    );
+      );
   } catch (error) {
     console.log(error);
     return false;
